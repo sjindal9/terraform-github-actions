@@ -1,0 +1,22 @@
+name: Run Git bot
+on:
+  issue_comment:
+    types:
+      - created
+jobs:
+  git-bot:
+    if: ${{ github.event.comment.body == '/bot destroy' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Destroy Infrastructure
+        run: terraform destroy -auto-approve
